@@ -20,11 +20,17 @@ public:
      *  Red, green, and blue should all be in the range 0 - 255.
      */
     RGBColor( uint8_t red, uint8_t green, uint8_t blue )
-            : r(red), g(green), b(blue)
-            {};
+        : r { red }
+        , g { green }
+        , b { blue }
+        {}
 
     /** Construct a RGB color representation of "white". */
-    RGBColor(): r(255), g(255), b(255) {};
+    RGBColor()
+        : r { 255 }
+        , g { 255 }
+        , b { 255 }
+        {}
 };
 
 class HSVColor {
@@ -36,16 +42,27 @@ public:
      *  Hue, saturation, and value should all be in the range 0-255.
      */
     HSVColor( uint8_t hue, uint8_t saturation, uint8_t value )
-            : h(hue), s(saturation), v(value) {};
+        : h { hue }
+        , s { saturation }
+        , v { value }
+        {}
 
     /** Construct an HSV color with the given hue.
      *
      *  The saturation and value will both be set to 255
      */
-    HSVColor(uint8_t hue): h(hue), s(255), v(255) {};
+    HSVColor(uint8_t hue)
+        : h { hue }
+        , s { 255 }
+        , v { 255 }
+        {}
 
     /** Construct an HSV color representation of "white". */
-    HSVColor(): h(0), s(0), v(255) {};
+    HSVColor()
+        : h { 0 }
+        , s { 0 }
+        , v { 255 }
+        {};
 
     /** Convert this HSV color into a new RGB color */
     operator RGBColor() {
@@ -106,28 +123,35 @@ public:
     RGBColor color;
 
     /** Construct a new RGBLed set to the given RGB color */
-    RGBLed(RGBColor start_color): color(start_color) {};
+    RGBLed(RGBColor start_color)
+        : color { start_color }
+        {}
 
     /** Construct a new RGBLed set to the given HSV color */
     // TODO: the implicit conversion might mean this happens magically?
-    RGBLed(HSVColor start_color): color(start_color) {};
+    RGBLed(HSVColor start_color)
+        : color { start_color }
+        {}
 
     /** Construct a new RGBLed with the given red, green, and blue values */
     RGBLed( uint8_t red, uint8_t green, uint8_t blue)
-          : color(RGBColor(red, green, blue)) {};
+        : color { RGBColor(red, green, blue) }
+        {};
 
     /** Construct a new RGBLed with no start color.
      *
      *  The starting color will default to white.
      */
-     RGBLed() : color(RGBColor()) {};
+     RGBLed()
+        : color { RGBColor() }
+        {};
 
     void show() {
         analogWrite(R_PIN, this->color->r);
         analogWrite(G_PIN, this->color->g);
         analogWrite(B_PIN, this->color->g);
     };
-    
+
     void hide() {
         analogWrite(R_PIN, 0);
         analogWrite(G_PIN, 0);
