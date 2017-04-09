@@ -1,0 +1,17 @@
+{ "name": "3_clor"
+, "keywords": "arduino, led"
+, "description": "Quick Arduino library for controlling 4-lead RGB LEDs"
+, "repository":
+  { "type": "git"
+  , "url": "https://github.com/hawkw/3_clor.git" }
+, "authors":
+    [ { "name": "Eliza Weisman"
+       , "email": "eliza@elizas.website"
+       , "url": "http://elizas.website"
+       , "maintainer": true }
+    ]
+, "dependencies": { },
+  "version": "0.1",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
