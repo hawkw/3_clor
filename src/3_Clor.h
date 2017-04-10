@@ -1,3 +1,16 @@
+/*
+    3_Clor.h
+    Eliza Weisman - eliza@elizas.website
+
+    A simple library for controlling 4-lead common-cathode and common-anode
+    RGB LEDs.
+
+    Note that this library is *not* for controlling digital RGB LEDs or digital
+    RGB LED strips (i.e., it is not intended as a replacement for libraries like
+    FastLED or Adafruit_NeoPixel). This library is for controlling single
+    4-lead RGB LEDs only.
+ */
+
 #ifndef ThreeClor_h_
 #define ThreeClor_h_
 
@@ -10,6 +23,9 @@
 #include "stdint.h"
 #include "pins_arduino.h"
 
+#define PWM_MAX 255
+#define PWM_LOW 0
+#define PWM_INVERT(x) PWM_MAX - x
 
 class RGBColor {
 public:
@@ -104,12 +120,14 @@ public:
 };
 
 
-/** Controller for a single 3-pin RGB LED
+/**
+ * Controller for a single 3-pin RGB LED
  *
- * Note that this currently supports only common-cathode LEDs.
+ * This class is abstract, and instantiated by the common-cathode and
+ * common-anode LED controller classes.
  */
-// TODO: support common-anode LEDs as well as common-cathode LEDs
-template <uint8_t R_PIN, uint8_t G_PIN, uint8_t B_PIN> class RGBLed {
+template <uint8_t R_PIN, uint8_t G_PIN, uint8_t B_PIN>
+class RGBLed {
     static_assert( digitalPinHasPWM(R_PIN)
                  , "RGB LED red pin must support PWM!");
     static_assert( digitalPinHasPWM(G_PIN)
@@ -146,6 +164,34 @@ public:
         : color { RGBColor() }
         {};
 
+    virtual void show() = 0;
+    virtual void hide() = 0;
+
+};
+
+/**
+ * Controller for a common-cathode RGB LED.
+ */
+template <uint8_t R_PIN, uint8_t G_PIN, uint8_t B_PIN>
+class CommonCathodeLed: public RGBLed<R_PIN, G_PIN, B_PIN> {
+public:
+
+    /** Construct a new RGBLed set to the given RGB color */
+    CommonCathodeLed(RGBColor start_color)
+        : RGBLed<R_PIN, G_PIN, B_PIN>(start_color)
+        {}
+
+    /** Construct a new RGBLed set to the given HSV color */
+    // TODO: the implicit conversion might mean this happens magically?
+    CommonCathodeLed(HSVColor start_color)
+        : RGBLed<R_PIN, G_PIN, B_PIN>(start_color)
+        {}
+
+    /** Construct a new RGBLed with the given red, green, and blue values */
+    CommonCathodeLed( uint8_t red, uint8_t green, uint8_t blue)
+        : RGBLed<R_PIN, G_PIN, B_PIN>( RGBColor(red, green, blue) )
+        {}
+
     void show() {
         analogWrite(R_PIN, this->color->r);
         analogWrite(G_PIN, this->color->g);
@@ -153,11 +199,46 @@ public:
     };
 
     void hide() {
-        analogWrite(R_PIN, 0);
-        analogWrite(G_PIN, 0);
-        analogWrite(B_PIN, 0);
+        analogWrite(R_PIN, PWM_LOW);
+        analogWrite(G_PIN, PWM_LOW);
+        analogWrite(B_PIN, PWM_LOW);
+    };
+};
+
+/**
+ * Controller for a common-anode RGB LED.
+ */
+template <uint8_t R_PIN, uint8_t G_PIN, uint8_t B_PIN>
+class CommonAnodeLed: public RGBLed<R_PIN, G_PIN, B_PIN> {
+public:
+
+    /** Construct a new RGBLed set to the given RGB color */
+    CommonAnodeLed(RGBColor start_color)
+        : RGBLed<R_PIN, G_PIN, B_PIN>(start_color)
+        {}
+
+    /** Construct a new RGBLed set to the given HSV color */
+    // TODO: the implicit conversion might mean this happens magically?
+    CommonAnodeLed(HSVColor start_color)
+        : RGBLed<R_PIN, G_PIN, B_PIN>(start_color)
+        {}
+
+    /** Construct a new RGBLed with the given red, green, and blue values */
+    CommonAnodeLed( uint8_t red, uint8_t green, uint8_t blue)
+        : RGBLed<R_PIN, G_PIN, B_PIN>( RGBColor(red, green, blue) )
+        {}
+
+    void show() {
+        analogWrite(R_PIN, PWM_INVERT(this->color->r));
+        analogWrite(G_PIN, PWM_INVERT(this->color->g));
+        analogWrite(B_PIN, PWM_INVERT(this->color->g));
     };
 
+    void hide() {
+        analogWrite(R_PIN, PWM_INVERT(PWM_LOW));
+        analogWrite(G_PIN, PWM_INVERT(PWM_LOW));
+        analogWrite(B_PIN, PWM_INVERT(PWM_LOW));
+    };
 };
 
 #endif
