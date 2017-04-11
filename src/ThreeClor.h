@@ -128,15 +128,15 @@ public:
  */
 template <uint8_t R_PIN, uint8_t G_PIN, uint8_t B_PIN>
 class RGBLed {
-    static_assert( digitalPinHasPWM(R_PIN)
-                 , "RGB LED red pin must support PWM!");
-    static_assert( digitalPinHasPWM(G_PIN)
-                 , "RGB LED green pin must support PWM!");
-    static_assert( digitalPinHasPWM(B_PIN)
-                 , "RGB LED blue pin must support PWM!");
-    static_assert( R_PIN != G_PIN && R_PIN != B_PIN && B_PIN != G_PIN
-                 , "RGB LED red, green, and blue pins must have different pin \
-                    numbers!");
+   static_assert( digitalPinHasPWM(R_PIN)
+                , "RGB LED red pin must support PWM!");
+   static_assert( digitalPinHasPWM(G_PIN)
+                , "RGB LED green pin must support PWM!");
+   static_assert( digitalPinHasPWM(B_PIN)
+                , "RGB LED blue pin must support PWM!");
+   static_assert( R_PIN != G_PIN && R_PIN != B_PIN && B_PIN != G_PIN
+                , "RGB LED red, green, and blue pins must have different pin \
+                   numbers!");
 public:
     RGBColor color;
 
@@ -192,10 +192,15 @@ public:
         : RGBLed<R_PIN, G_PIN, B_PIN>( RGBColor(red, green, blue) )
         {}
 
+        /** Construct a new RGBLed set to the given RGB color */
+    CommonCathodeLed()
+        : RGBLed<R_PIN, G_PIN, B_PIN>()
+        {}
+
     void show() {
-        analogWrite(R_PIN, this->color->r);
-        analogWrite(G_PIN, this->color->g);
-        analogWrite(B_PIN, this->color->g);
+        analogWrite(R_PIN, this->color.r);
+        analogWrite(G_PIN, this->color.g);
+        analogWrite(B_PIN, this->color.b);
     };
 
     void hide() {
@@ -229,9 +234,9 @@ public:
         {}
 
     void show() {
-        analogWrite(R_PIN, PWM_INVERT(this->color->r));
-        analogWrite(G_PIN, PWM_INVERT(this->color->g));
-        analogWrite(B_PIN, PWM_INVERT(this->color->g));
+        analogWrite(R_PIN, PWM_INVERT(this->color.r));
+        analogWrite(G_PIN, PWM_INVERT(this->color.g));
+        analogWrite(B_PIN, PWM_INVERT(this->color.g));
     };
 
     void hide() {
