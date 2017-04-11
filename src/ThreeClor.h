@@ -23,6 +23,8 @@
 #include "stdint.h"
 #include "pins_arduino.h"
 
+#include "BadStaticAssert.h"
+
 #define PWM_MAX 255
 #define PWM_LOW 0
 #define PWM_INVERT(x) PWM_MAX - x
@@ -128,13 +130,13 @@ public:
  */
 template <uint8_t R_PIN, uint8_t G_PIN, uint8_t B_PIN>
 class RGBLed {
-   static_assert( digitalPinHasPWM(R_PIN)
+   STATIC_ASSERT( digitalPinHasPWM(R_PIN)
                 , "RGB LED red pin must support PWM!");
-   static_assert( digitalPinHasPWM(G_PIN)
+   STATIC_ASSERT( digitalPinHasPWM(G_PIN)
                 , "RGB LED green pin must support PWM!");
-   static_assert( digitalPinHasPWM(B_PIN)
+   STATIC_ASSERT( digitalPinHasPWM(B_PIN)
                 , "RGB LED blue pin must support PWM!");
-   static_assert( R_PIN != G_PIN && R_PIN != B_PIN && B_PIN != G_PIN
+   STATIC_ASSERT( R_PIN != G_PIN && R_PIN != B_PIN && B_PIN != G_PIN
                 , "RGB LED red, green, and blue pins must have different pin \
                    numbers!");
 public:
