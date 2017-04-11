@@ -1,5 +1,5 @@
 /*
-    3_Clor.h
+    ThreeClor.h
     Eliza Weisman - eliza@elizas.website
 
     A simple library for controlling 4-lead common-cathode and common-anode
